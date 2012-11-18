@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver import Remote
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from time import sleep
 import requests
 from bs4 import BeautifulSoup
@@ -25,8 +27,7 @@ def get_mailinator_url(uname):
     print url
     return url
 
-def upvote_uv(vuln_url, uname):
-  wb = webdriver.Firefox()
+def upvote_uv(vuln_url, uname, wb):
   wb.delete_all_cookies()
   wb.get(vuln_url)
   sleep(1)
@@ -46,18 +47,19 @@ def upvote_uv(vuln_url, uname):
   a = wb.find_element_by_class_name("uvIdeaVoteCount")
   num = a.text.split("\n")[0]
   print "after voting num is now %s" % num
-  sleep(19)
+  sleep(10)
   uv_reg_url = get_mailinator_url(uname)
   wb.get(uv_reg_url)
   sleep(3)
-  wb.close()
 
 
 if __name__ == '__main__':
-    for i in range(5):
-        uname = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(13))
-        vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358935-i-think-therefore-i-am"
-        upvote_uv(vuln_url, uname)
-        sleep(random.random()*20)
+  wb = Remote("http://0.0.0.0:4444/wd/hub", DesiredCapabilities.FIREFOX)
+  for i in range(5):
+    uname = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(13))
+    vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358935-i-think-therefore-i-am"
+    upvote_uv(vuln_url, uname, wb)
+    sleep(random.random()*20)
+  wb.close()
 
 
