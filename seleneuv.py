@@ -101,12 +101,11 @@ class Change:
     def sign(self, url):
         wb = self.wb
         wb.get(url)
-        sleep(3)
+        sleep(5)
         wb.find_element_by_name('signature[address]').send_keys(self.address)
         wb.find_element_by_name('signature[city]').send_keys(self.city)
         wb.find_element_by_name('signature[zip_code]').send_keys(self.zipcode)
         #wb.find_element_by_name('signature[message]').send_keys(self.reason)
-        sleep(1)
         wb.find_elements_by_name('signature[public]')[-1].click()
         sleep(2)
         wb.find_element_by_class_name('submit').click()
@@ -115,13 +114,13 @@ class Change:
 
 if __name__ == '__main__':
     #wb = webdriver.Firefox()
-    wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
+    wb = webdriver.Firefox()
     for i in range(40):
         change  = Change(wb)
         change.make_account()
         print "attempting to sign first petition"
         change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
-        print "2nd"
+        print "attempting 2nd"
         change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
 
 """
