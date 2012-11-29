@@ -81,7 +81,7 @@ class Change:
         sleep(1)
         wb.get("http://change.org")
         wb.find_element_by_css_selector("button.small").click() #opens sign in pane
-        sleep(3)
+        sleep(2)
         wb.find_element_by_name('new_user[profile][first_name]').send_keys(self.first_name)
         wb.find_element_by_name('new_user[profile][last_name]').send_keys(self.last_name)
         wb.find_element_by_name('new_user[email]').send_keys(self.email)
@@ -89,37 +89,38 @@ class Change:
         sleep(2)
         wb.find_element_by_id('new_user_submit').click()
         print "waiting for email"
-        sleep(15)
+        sleep(10)
         auth_url = get_mailinator_url(self.last_name, change_email)
         wb.get(auth_url)
         wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
         wb.find_element_by_css_selector('button.submit').click()
-        sleep(3)
+        sleep(2)
         print "email validated"
 
-    def sign_first(self, url):
+    def sign(self, url):
         wb = self.wb
         wb.get(url)
         print "attempting to sign first petition"
-        sleep(6)
+        sleep(3)
         wb.find_element_by_name('signature[address]').send_keys(self.address)
         wb.find_element_by_name('signature[city]').send_keys(self.city)
         wb.find_element_by_name('signature[zip_code]').send_keys(self.zipcode)
-        wb.find_element_by_name('signature[message]').send_keys(self.reason)
+        #wb.find_element_by_name('signature[message]').send_keys(self.reason)
+        sleep(1)
+        wb.find_elements_by_name('signature[public]')[-1].click()
         sleep(2)
         wb.find_element_by_class_name('submit').click()
-        print url[-20:-1] + " signed as " + self.email
-
-    def sign_another(self, url):
-        wb = self.wb
+        print url.split('/')[-1] + " signed as " + self.email
 
 
 if __name__ == '__main__':
+    #wb = webdriver.Firefox()
     wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
-    for i in range(10):
+    for i in range(40):
         change  = Change(wb)
         change.make_account()
-        change.sign_first("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
+        change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
+        change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
 
 """
   for i in range(5):
