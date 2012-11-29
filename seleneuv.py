@@ -99,17 +99,20 @@ class Change:
         print "email validated"
 
     def sign(self, url):
-        wb = self.wb
-        wb.get(url)
-        sleep(5)
-        wb.find_element_by_name('signature[address]').send_keys(self.address)
-        wb.find_element_by_name('signature[city]').send_keys(self.city)
-        wb.find_element_by_name('signature[zip_code]').send_keys(self.zipcode)
-        #wb.find_element_by_name('signature[message]').send_keys(self.reason)
-        wb.find_elements_by_name('signature[public]')[-1].click()
-        sleep(2)
-        wb.find_element_by_class_name('submit').click()
-        print url.split('/')[-1] + " signed as " + self.email
+        try:
+            wb = self.wb
+            wb.get(url)
+            #urlsleep(3)
+            wb.find_element_by_name('signature[address]').send_keys(self.address)
+            wb.find_element_by_name('signature[city]').send_keys(self.city)
+            wb.find_element_by_name('signature[zip_code]').send_keys(self.zipcode)
+            #wb.find_element_by_name('signature[message]').send_keys(self.reason)
+            wb.find_elements_by_name('signature[public]')[-1].click()
+            sleep(2)
+            wb.find_element_by_class_name('submit').click()
+            print url.split('/')[-1] + " signed as " + self.email
+        except Exception:
+            print "signing failed"
 
 
 if __name__ == '__main__':
@@ -122,6 +125,7 @@ if __name__ == '__main__':
         change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
         print "attempting 2nd"
         change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
+        print "ctr " + str(i)
 
 """
   for i in range(5):
