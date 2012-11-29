@@ -124,10 +124,6 @@ if __name__ == '__main__':
         print "2nd"
         change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
 
-
-
-
-
 """
   for i in range(5):
     uname = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(13))
