@@ -80,6 +80,7 @@ class Change:
         wb = self.wb
         sleep(1)
         wb.get("http://change.org")
+        sleep(2)
         wb.find_element_by_css_selector("button.small").click() #opens sign in pane
         sleep(2)
         wb.find_element_by_name('new_user[profile][first_name]').send_keys(self.first_name)
@@ -100,7 +101,6 @@ class Change:
     def sign(self, url):
         wb = self.wb
         wb.get(url)
-        print "attempting to sign first petition"
         sleep(3)
         wb.find_element_by_name('signature[address]').send_keys(self.address)
         wb.find_element_by_name('signature[city]').send_keys(self.city)
@@ -119,7 +119,9 @@ if __name__ == '__main__':
     for i in range(40):
         change  = Change(wb)
         change.make_account()
+        print "attempting to sign first petition"
         change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
+        print "2nd"
         change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
 
 
