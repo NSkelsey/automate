@@ -54,7 +54,7 @@ def upvote_uv(vuln_url, uname, wb):
 
 
 if __name__ == '__main__':
-  wb = Remote("http://0.0.0.0:4444/wd/hub", DesiredCapabilities.FIREFOX)
+  wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
   for i in range(5):
     uname = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(13))
     vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358935-i-think-therefore-i-am"
