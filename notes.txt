@@ -1,0 +1,31 @@
+Change.org
+
+https://www.change.org/members/32059103  10/23/12 at 1:36
+
+admin
+http://www.change.org/members/weldon
+
+search /members for nick swisher later
+
+
+
+
+
+For a selenium environ you need: 
+http://serverfault.com/questions/108781/how-can-i-run-selenium-tests-on-an-ubuntu-server
+	a display: x11 Xvfb in ubunutu
+	Xvfb :15 -ac -screen 0 1024x768x8 &
+
+	a selenium-rc server: installed/running
+	java -jar selenium-server-standalone-2.25.0.jar &
+	
+	firefox installed with DISPLAY var set to export DISPLAY=:15
+	a python script calling it
+
+
+http://www.veracode.com/blog/2012/11/security-headers-report/
+
+obscurity
+ 
+java -jar selenium-server-standalone-2.26.0.jar -role node -hub
+http://54.243.59.236:80/grid/register -browser browserName=firefox
