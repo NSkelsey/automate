@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import random
 import string
 from IPython import embed
+from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 
@@ -81,7 +82,7 @@ class Change:
         sleep(1)
         wb.get("http://change.org")
         sleep(2)
-        wb.find_element_by_css_selector("button.small").click() #opens sign in pane
+        wb.find_element_by_css_selector("button.small").click() #opens signin pane
         sleep(2)
         wb.find_element_by_name('new_user[profile][first_name]').send_keys(self.first_name)
         wb.find_element_by_name('new_user[profile][last_name]').send_keys(self.last_name)
@@ -111,24 +112,27 @@ class Change:
             sleep(2)
             wb.find_element_by_class_name('submit').click()
             print url.split('/')[-1] + " signed as " + self.email
-        except Exception:
+        except ElementNotVisibleException:
             print "signing failed"
 
 
 if __name__ == '__main__':
     #wb = webdriver.Firefox()
-    wb = webdriver.Firefox()
+    wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     for i in range(40):
-        change  = Change(wb)
-        change.make_account()
-        print "attempting to sign first petition"
-        change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
-        print "attempting 2nd"
-        change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
-        print "ctr " + str(i)
+        try:
+            change  = Change(wb)
+            change.make_account()
+            print "attempting to sign first petition"
+            change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
+            print "attempting 2nd"
+            change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
+            print "iteration: " + str(i)
+        except UnboundLocalError as e:
+            print "mailinator validation might have broken"
 
-"""
-  for i in range(5):
+    """
+      for i in range(5):
     uname = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(13))
     vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358935-i-think-therefore-i-am"
     upvote_uv(vuln_url, uname, wb)
