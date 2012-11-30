@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import random
 import string
 from IPython import embed
-from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
+from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 
@@ -93,11 +93,14 @@ class Change:
             print "waiting for email"
             sleep(10)
             auth_url = get_mailinator_url(self.last_name, change_email)
-            wb.get(auth_url)
-            wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
-            wb.find_element_by_css_selector('button.submit').click()
-            print "email validated"
-            sleep(2)
+            try:
+                wb.get(auth_url)
+                wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
+                wb.find_element_by_css_selector('button.submit').click()
+                print "email validated"
+                sleep(2)
+            except (UnboundLocal, WebDriverException) as e:
+                print "auth failed"
         except NoSuchElementException:
             print "I broke"
 
