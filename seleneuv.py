@@ -99,12 +99,12 @@ class Change:
                 wb.find_element_by_css_selector('button.submit').click()
                 print "email validated"
                 sleep(2)
-            except (UnboundLocal, WebDriverException) as e:
+            except (UnboundLocalError) as e:
                 print "auth failed"
-        except NoSuchElementException:
-            print "I broke"
+        except (NoSuchElementException, WebDriverException) as e:
+            print "Failed to make account"
 
-    def sign(self, url):
+    def sign(self, url, failures, signatures):
         try:
             wb = self.wb
             wb.get(url)
@@ -117,22 +117,27 @@ class Change:
             sleep(2)
             wb.find_element_by_class_name('submit').click()
             print url.split('/')[-1] + " signed as " + self.email
-        except (ElementNotVisibleException, NoSuchElementException) as e:
+            signatures += 1
+        except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
             print "signing failed"
+            failures += 1
+
 
 
 if __name__ == '__main__':
     #wb = webdriver.Firefox()
     wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
+    fs, ss = (0, 0)
     for i in range(40):
         change  = Change(wb)
         change.make_account()
         print "attempting to sign first petition"
-        change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
+        change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback", fs, ss)
         print "attempting 2nd"
-        change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
+        change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality", fs, ss)
         print "iteration: " + str(i)
         print "mailinator validation might have broken"
+    print "failures: %s successes:  %s" % (fs, ss)
 
 """
   for i in range(5):
