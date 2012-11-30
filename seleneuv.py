@@ -114,7 +114,7 @@ class Change:
             sleep(2)
             wb.find_element_by_class_name('submit').click()
             print url.split('/')[-1] + " signed as " + self.email
-        except ElementNotVisibleException:
+        except (ElementNotVisibleException, NoSuchElementException) as e:
             print "signing failed"
 
 
