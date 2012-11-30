@@ -99,10 +99,13 @@ class Change:
                 wb.find_element_by_css_selector('button.submit').click()
                 print "email validated"
                 sleep(2)
+                return True
             except (UnboundLocalError) as e:
                 print "auth failed"
+                return False
         except (NoSuchElementException, WebDriverException) as e:
             print "Failed to make account"
+            return False
 
     def sign(self, url, failures, signatures):
         try:
@@ -130,7 +133,8 @@ if __name__ == '__main__':
     fs, ss = (0, 0)
     for i in range(40):
         change  = Change(wb)
-        change.make_account()
+        if change.make_account():
+            continue
         print "attempting to sign first petition"
         change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback", fs, ss)
         print "attempting 2nd"
