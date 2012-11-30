@@ -82,28 +82,30 @@ class Change:
         sleep(1)
         wb.get("http://change.org")
         sleep(2)
-        wb.find_element_by_css_selector("button.small").click() #opens signin pane
-        sleep(2)
-        wb.find_element_by_name('new_user[profile][first_name]').send_keys(self.first_name)
-        wb.find_element_by_name('new_user[profile][last_name]').send_keys(self.last_name)
-        wb.find_element_by_name('new_user[email]').send_keys(self.email)
-        wb.find_element_by_name('new_user[password]').send_keys(self.password)
-        sleep(2)
-        wb.find_element_by_id('new_user_submit').click()
-        print "waiting for email"
-        sleep(10)
-        auth_url = get_mailinator_url(self.last_name, change_email)
-        wb.get(auth_url)
-        wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
-        wb.find_element_by_css_selector('button.submit').click()
-        sleep(2)
-        print "email validated"
+        try:
+            wb.find_element_by_css_selector("button.small").click() #opens signin pane
+            sleep(2)
+            wb.find_element_by_name('new_user[profile][first_name]').send_keys(self.first_name)
+            wb.find_element_by_name('new_user[profile][last_name]').send_keys(self.last_name)
+            wb.find_element_by_name('new_user[email]').send_keys(self.email)
+            wb.find_element_by_name('new_user[password]').send_keys(self.password)
+            wb.find_element_by_id('new_user_submit').click()
+            print "waiting for email"
+            sleep(10)
+            auth_url = get_mailinator_url(self.last_name, change_email)
+            wb.get(auth_url)
+            wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
+            wb.find_element_by_css_selector('button.submit').click()
+            print "email validated"
+            sleep(2)
+        except NoSuchElementException:
+            print "I broke"
 
     def sign(self, url):
         try:
             wb = self.wb
             wb.get(url)
-            #urlsleep(3)
+            sleep(1)
             wb.find_element_by_name('signature[address]').send_keys(self.address)
             wb.find_element_by_name('signature[city]').send_keys(self.city)
             wb.find_element_by_name('signature[zip_code]').send_keys(self.zipcode)
@@ -120,22 +122,20 @@ if __name__ == '__main__':
     #wb = webdriver.Firefox()
     wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     for i in range(40):
-        try:
-            change  = Change(wb)
-            change.make_account()
-            print "attempting to sign first petition"
-            change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
-            print "attempting 2nd"
-            change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
-            print "iteration: " + str(i)
-        except UnboundLocalError as e:
-            print "mailinator validation might have broken"
+        change  = Change(wb)
+        change.make_account()
+        print "attempting to sign first petition"
+        change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback")
+        print "attempting 2nd"
+        change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality")
+        print "iteration: " + str(i)
+        print "mailinator validation might have broken"
 
-    """
-      for i in range(5):
-    uname = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(13))
-    vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358935-i-think-therefore-i-am"
-    upvote_uv(vuln_url, uname, wb)
-    sleep(random.random()*20)
-  wb.close()
+"""
+  for i in range(5):
+uname = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(13))
+vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358935-i-think-therefore-i-am"
+upvote_uv(vuln_url, uname, wb)
+sleep(random.random()*20)
+wb.close()
 """
