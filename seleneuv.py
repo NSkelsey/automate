@@ -140,7 +140,6 @@ if __name__ == '__main__':
         print "attempting to sign first petition"
         sft = change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback", sft)
         print "iteration: " + str(i)
-        print "mailinator validation might have broken"
     log = "failures: %s successes:  %s \n" % sft
     print log
     f = open('log.txt', 'w')
