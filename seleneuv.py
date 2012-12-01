@@ -133,7 +133,7 @@ if __name__ == '__main__':
     wb = webdriver.Firefox()
     #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     sft = (0, 0)
-    for i in range(2000):
+    for i in range(0):
         change  = Change(wb)
         if not change.make_account():
             continue
@@ -141,9 +141,9 @@ if __name__ == '__main__':
         sft = change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback", sft)
         print "iteration: " + str(i)
         print "mailinator validation might have broken"
-    log = "failures: %s successes:  %s" % sft
+    log = "failures: %s successes:  %s \n" % sft
     print log
-    f = open('w', 'log.txt')
+    f = open('log.txt', 'w')
     f.write(log)
     f.close()
 
