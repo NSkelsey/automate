@@ -133,7 +133,7 @@ if __name__ == '__main__':
     wb = webdriver.Firefox()
     #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     sft = (0, 0)
-    for i in range(0):
+    for i in range(2000):
         change  = Change(wb)
         if not change.make_account():
             continue
