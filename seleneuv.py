@@ -92,8 +92,8 @@ class Change:
             wb.find_element_by_id('new_user_submit').click()
             print "waiting for email"
             sleep(10)
-            auth_url = get_mailinator_url(self.last_name, change_email)
             try:
+                auth_url = get_mailinator_url(self.last_name, change_email)
                 wb.get(auth_url)
                 wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
                 wb.find_element_by_css_selector('button.submit').click()
@@ -107,7 +107,8 @@ class Change:
             print "Failed to make account"
             return False
 
-    def sign(self, url, failures, signatures):
+    def sign(self, url, sft):
+        signatures, failures = sft
         try:
             wb = self.wb
             wb.get(url)
@@ -124,24 +125,27 @@ class Change:
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
             print "signing failed"
             failures += 1
+        return (signatures, failures)
 
 
 
 if __name__ == '__main__':
-    #wb = webdriver.Firefox()
-    wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
-    fs, ss = (0, 0)
-    for i in range(40):
+    wb = webdriver.Firefox()
+    #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
+    sft = (0, 0)
+    for i in range(2000):
         change  = Change(wb)
         if not change.make_account():
             continue
         print "attempting to sign first petition"
-        change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback", fs, ss)
-        print "attempting 2nd"
-        change.sign("http://www.change.org/petitions/city-council-of-the-united-states-end-marriage-inequality", fs, ss)
+        sft = change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback", sft)
         print "iteration: " + str(i)
         print "mailinator validation might have broken"
-    print "failures: %s successes:  %s" % (fs, ss)
+    log = "failures: %s successes:  %s" % sft
+    print log
+    f = open('w', 'log.txt')
+    f.write(log)
+    f.close()
 
 """
   for i in range(5):
