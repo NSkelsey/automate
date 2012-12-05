@@ -200,7 +200,7 @@ if __name__ == '__main__':
     for i in range(5):
         print "=====Starting iteration with sftUV=" + str(sftUV) + "======"
         uv = UserVoice(wb)
-        sftUV = uv.sign(url, sftUV)
+        sftUV = uv.sign(uservoice_url, sftUV)
 
     for i in range(numIterations):
         change  = Change(wb)
