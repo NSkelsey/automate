@@ -1,3 +1,4 @@
+import sys
 from selenium import webdriver
 from selenium.webdriver import Remote
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -107,7 +108,7 @@ class Change:
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
             print "waiting for email"
-            sleep(10)
+            sleep(1)
             return self.validate_email()
         except (NoSuchElementException, WebDriverException) as e:
             print "Failed to make account"
@@ -140,8 +141,10 @@ if __name__ == '__main__':
     #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     sft = (0, 0)
     li = []
-    url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
-    for i in range(20):
+    #url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
+    url = sys.argv[1]
+	numIterations = sys.argv[2]
+    for i in range(numIterations):
         change  = Change(wb)
         if not change.make_account():
             sft = (sft[0], sft[1] + 1)
