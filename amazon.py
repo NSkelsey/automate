@@ -68,8 +68,7 @@ def uname():
 @task
 @parallel
 def change_drive_by():
-    run("nohup Xvfb :15 -ac -screen 0 1024x768x8 &")
-    sleep(3)
+    run("nohup Xvfb :15 -ac -screen 0 1024x768x8 &", pty=False)
     run("export DISPLAY=:15; python ~/automate/seleneuv.py")
 
 @task
@@ -108,15 +107,15 @@ if __name__ == "__main__":
     conn = boto.connect_ec2()
 
 
-    r = launch_fleet(conn, 5) # launches x number of instances
-    sleep(60) # inorder to give amazon time to think
+    #r = launch_fleet(conn, 5) # launches x number of instances
+    #sleep(60) # inorder to give amazon time to think
 
     r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
 
     print "="*50
     print "Doing stuff with instances"
 
-    run_fabric(conn, r.instances, uname)
+    #run_fabric(conn, r.instances, uname)
     run_fabric(conn, r.instances, update_repo)
     run_fabric(conn, r.instances, change_drive_by)
 
