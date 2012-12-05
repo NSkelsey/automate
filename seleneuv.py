@@ -91,7 +91,7 @@ class Change:
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
             print "waiting for email"
-            sleep(10)
+            sleep(15)
             try:
                 auth_url = get_mailinator_url(self.last_name, change_email)
                 wb.get(auth_url)
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     wb = webdriver.Firefox()
     #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     sft = (0, 0)
-    for i in range(2000):
+    for i in range(200):
         change  = Change(wb)
         if not change.make_account():
             continue

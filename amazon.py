@@ -59,17 +59,29 @@ def make_host_list(instances):
     return li
 
 @task
+@parallel
 def uname():
-    run("uname -a")
-    run("whoami")
+    run("uname -s")
+
+@task
+@parallel
+def change_drive_by():
+    sudo("Xvfb :15 -ac -screen 0 1024x768x8 &")
+    sudo("python ~/automate/seleneuv.py")
+
+@task
+@parallel
+def update_repo():
+    run("rm -rf ~/automate")
+    run("git clone https://github.com/NSkelsey/automate.git")
 
 def run_fabric(conn, instances, func):
     host_str = make_host_list(r.instances)
     print host_str
     env.hosts = host_str
-    env.key_filename = '/home/ubuntu/.ssh/blog.pem'
+    #env.key_filename = '/home/ubuntu/.ssh/blog.pem'
     ################################################
-    #env.key_filename = '/Users/skelsey/.ssh/blog.pem'
+    env.key_filename = '/Users/skelsey/.ssh/blog.pem'
     execute(func)
 
 def tally_states(conn):
@@ -90,7 +102,7 @@ if __name__ == "__main__":
 
     # replace me here with your connection code
     ####################################
-    #conn = boto.connect_ec2()
+    conn = boto.connect_ec2()
 
 
     r = launch_fleet(conn, 1) # launches x number of instances
@@ -102,12 +114,14 @@ if __name__ == "__main__":
     print "Doing stuff with instances"
 
     run_fabric(conn, r.instances, uname)
+    run_fabric(conn, r.instances, update_repo)
+    run_fabric(conn, r.instances, change_drive_by)
 
     sleep(2)
     print "="*50
     print "Stopping...."
 
-    stop_fleet(conn,) # without r it will stop all instances with ami-id
+   #stop_fleet(conn,) # without r it will stop all instances with ami-id
     tally_states(conn) # will state how many instances are in an active state
 
 
