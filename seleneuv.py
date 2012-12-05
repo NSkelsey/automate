@@ -143,7 +143,7 @@ if __name__ == '__main__':
     li = []
     #url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
     url = sys.argv[1]
-	numIterations = sys.argv[2]
+    numIterations = sys.argv[2]
     for i in range(numIterations):
         change  = Change(wb)
         if not change.make_account():
