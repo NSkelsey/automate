@@ -199,9 +199,12 @@ if __name__ == '__main__':
     
     for i in range(5):
         print "=====Starting iteration with sftUV=" + str(sftUV) + "======"
-        uv = UserVoice(wb)
+        newwb = webdriver.Firefox()
+        uv = UserVoice(newwb)
         sftUV = uv.sign(url, sftUV)
+        newwb.close()
 
+    wb = webdriver.Firefox()
     for i in range(numIterations):
         change  = Change(wb)
         if not change.make_account():
