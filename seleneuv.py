@@ -170,7 +170,7 @@ class UserVoice:
             emailbox.send_keys(self.email)
             print "Email field filled with " + self.email
             #enter name
-            sleeprand(2)
+            sleeprand(1)
             namebox = wb.find_element_by_id('display_name_1')
             namebox.send_keys(self.name)           
             print "Name field filled with " + self.name 
@@ -198,7 +198,7 @@ if __name__ == '__main__':
         numIterations = int(sys.argv[2])
     
     for i in range(5):
-        print "Starting iteration with sftUV=" + str(sftUV)
+        print "=====Starting iteration with sftUV=" + str(sftUV) + "======"
         uv = UserVoice(wb)
         sftUV = uv.sign(url, sftUV)
 
