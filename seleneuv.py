@@ -141,8 +141,9 @@ if __name__ == '__main__':
     #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     sft = (0, 0)
     li = []
-    url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
-	numIterations = sys.argv[1]
+    #url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
+    url = sys.argv[1]
+	numIterations = sys.argv[2]
     for i in range(numIterations):
         change  = Change(wb)
         if not change.make_account():

@@ -70,7 +70,9 @@ def uname():
 def change_drive_by():
     run("nohup Xvfb :15 -ac -screen 0 1024x768x8 &")
     sleep(3)
-    run("export DISPLAY=:15; python ~/automate/seleneuv.py")
+	url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
+	numIterations = 20
+    run("export DISPLAY=:15; python ~/automate/seleneuv.py %s %s" % (url, numIterations))
 
 @task
 @parallel
