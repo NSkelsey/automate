@@ -71,7 +71,7 @@ def change_drive_by():
     run("nohup Xvfb :15 -ac -screen 0 1024x768x8 &", pty=False)
     sleep(3)
     url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
-    numIterations = 2
+    numIterations = 35
     run("export DISPLAY=:15; python ~/automate/seleneuv.py %s %s" % (url, numIterations))
 
 @task
@@ -109,8 +109,8 @@ if __name__ == "__main__":
     ####################################
     conn = boto.connect_ec2()
 
-    for i in range(2):
-        r = launch_fleet(conn, 1) # launches x number of instances
+    for i in range(7):
+        r = launch_fleet(conn, 4) # launches x number of instances
         sleep(60) # inorder to give amazon time to think
 
         #r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
@@ -129,5 +129,6 @@ if __name__ == "__main__":
         stop_fleet(conn,) # without r it will stop all instances with ami-id
         tally_states(conn) # will state how many instances are in an active state
         print "Sleeping"
-        #sleep(600)
+        sleep(600)
+    stop_fleet(conn,)
 

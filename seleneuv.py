@@ -157,7 +157,7 @@ if __name__ == '__main__':
             print "<itr: %s, Accnt: %s, Created: %s, Signed: %s>" % (str(i), change.last_name, str(not change.broke), change.signed)
 
     log = "="*50 + "\nRUN COMPLETED\n"
-    log += "Successes: %s\nFailures: %s\nSaves: %s\nTotal: %s" % (sft[0], sft[1], saves, saves+sft[0])
+    log += "Successes: %s\nFailures: %s\nSaves: %s\nTotal: %s\n" % (sft[0], sft[1], saves, saves+sft[0])
     log += "="*50
     print log
     f = open('log.txt', 'w')
