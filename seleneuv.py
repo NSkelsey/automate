@@ -9,6 +9,7 @@ import random
 import string
 from IPython import embed
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
+from random import randint
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 
@@ -34,7 +35,7 @@ def get_mailinator_url(uname, url_func): # pass in the url func depending on the
     mail_page = requests.get(url)
     soup = BeautifulSoup(mail_page.text)
     url = url_func(soup)
-    print "auth url: " + url
+    #print "auth url: " + url
     return url
 
 def upvote_uv(vuln_url, uname, wb):
@@ -74,10 +75,10 @@ class Change:
         self.city = 'charlottesville'
         self.state = 'VA'
         self.email = self.last_name + "@mailinator.com"
-        print 'account name: ' + self.email
         webdriver.delete_all_cookies()
         self.wb = webdriver
         self.broke = False
+        self.signed = "No"
 
     def validate_email(self):
         try:
@@ -85,14 +86,11 @@ class Change:
             wb.get(auth_url)
             wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
             wb.find_element_by_css_selector('button.submit').click()
-            print "email validated"
             sleep(2)
             return True
         except (UnboundLocalError, NoSuchElementException) as e:
             self.broke = True
-            print "auth failed"
             return False
-
 
     def make_account(self):
         wb = self.wb
@@ -110,7 +108,7 @@ class Change:
             wb.find_element_by_name('new_user[email]').send_keys(self.email)
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
-            sleep(10)
+            sleep(randint(7,13))
             return self.validate_email()
         except (NoSuchElementException, WebDriverException) as e:
             return False
@@ -128,20 +126,17 @@ class Change:
             wb.find_elements_by_name('signature[public]')[-1].click()
             sleep(2)
             wb.find_element_by_class_name('submit').click()
-            print "\t" + url.split('/')[-1] + " signed as " + self.email
             signatures += 1
+            self.signed = "Yes"
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
             failures += 1
         return (signatures, failures)
 
 
-
 if __name__ == '__main__':
     wb = webdriver.Firefox()
-    #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     sft = (0, 0)
     li = []
-    #url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
     url = sys.argv[1]
     numIterations = int(sys.argv[2])
     for i in range(numIterations):
@@ -151,7 +146,7 @@ if __name__ == '__main__':
             li.append(change)
             continue
         sft = change.sign(url, sft)
-        print "\titeration: " + str(i)
+        print "<itr: %s, Accnt: %s, Created: %s, Signed: %s>" % (str(i), change.last_name, str(change.broke), change.signed)
     print "retrying accts: %s" % len(li)
     saves = 0
     for change in li:
@@ -159,9 +154,10 @@ if __name__ == '__main__':
         change.validate_email()
         if change.sign(url, (0,0)):
             saves += 1
+            print "<itr: %s, Accnt: %s, Created: %s, Signed: %s>" % (str(i), change.last_name, str(not change.broke), change.signed)
 
     log = "="*50 + "\nRUN COMPLETED\n"
-    log += "Successes: %s\nFailures: %s\nSaves: %s\n" % (sft[0], sft[1], saves)
+    log += "Successes: %s\nFailures: %s\nSaves: %s\nTotal: %s" % (sft[0], sft[1], saves, saves+sft[0])
     log += "="*50
     print log
     f = open('log.txt', 'w')

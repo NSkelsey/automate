@@ -55,7 +55,7 @@ def make_host_list(instances):
                     print "instance dead"
                     break
         if ctr > 6:
-            continue
+            break
         s = "ubuntu@" + ins.ip_address
         li.append(s)
     return li
@@ -71,7 +71,7 @@ def change_drive_by():
     run("nohup Xvfb :15 -ac -screen 0 1024x768x8 &", pty=False)
     sleep(3)
     url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
-    numIterations = 10
+    numIterations = 2
     run("export DISPLAY=:15; python ~/automate/seleneuv.py %s %s" % (url, numIterations))
 
 @task
@@ -109,22 +109,25 @@ if __name__ == "__main__":
     ####################################
     conn = boto.connect_ec2()
 
+    for i in range(2):
+        r = launch_fleet(conn, 1) # launches x number of instances
+        sleep(60) # inorder to give amazon time to think
 
-    #r = launch_fleet(conn, 5) # launches x number of instances
-    #sleep(60) # inorder to give amazon time to think
+        #r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
 
-    r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
+        print "="*50
+        print "Doing stuff with instances"
 
-    print "="*50
-    print "Doing stuff with instances"
+        run_fabric(conn, r.instances, uname)
+        run_fabric(conn, r.instances, update_repo)
+        run_fabric(conn, r.instances, change_drive_by)
 
-    run_fabric(conn, r.instances, uname)
-    #run_fabric(conn, r.instances, update_repo)
-    #run_fabric(conn, r.instances, change_drive_by)
+        sleep(2)
+        print "="*50
+        print "Stopping...."
 
-    sleep(2)
-    print "="*50
-    print "Stopping...."
+        stop_fleet(conn,) # without r it will stop all instances with ami-id
+        tally_states(conn) # will state how many instances are in an active state
+        print "Sleeping"
+        #sleep(600)
 
-    stop_fleet(conn,) # without r it will stop all instances with ami-id
-    tally_states(conn) # will state how many instances are in an active state
