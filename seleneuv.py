@@ -88,7 +88,7 @@ class Change:
             print "email validated"
             sleep(2)
             return True
-        except (UnboundLocalError) as e:
+        except (UnboundLocalError, NoSuchElementException) as e:
             self.broke = True
             print "auth failed"
             return False
@@ -97,8 +97,11 @@ class Change:
     def make_account(self):
         wb = self.wb
         sleep(1)
-        wb.get("http://change.org")
-        sleep(2)
+        try:
+            wb.get("http://change.org")
+        except WebDriverException:
+            return False
+        sleep(10)
         try:
             wb.find_element_by_css_selector("button.small").click() #opens signin pane
             sleep(2)
@@ -107,11 +110,9 @@ class Change:
             wb.find_element_by_name('new_user[email]').send_keys(self.email)
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
-            print "waiting for email"
             sleep(1)
             return self.validate_email()
         except (NoSuchElementException, WebDriverException) as e:
-            print "Failed to make account"
             return False
 
     def sign(self, url, sft):
@@ -127,10 +128,9 @@ class Change:
             wb.find_elements_by_name('signature[public]')[-1].click()
             sleep(2)
             wb.find_element_by_class_name('submit').click()
-            print url.split('/')[-1] + " signed as " + self.email
+            print "\t" + url.split('/')[-1] + " signed as " + self.email
             signatures += 1
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
-            print "signing failed"
             failures += 1
         return (signatures, failures)
 
@@ -150,9 +150,8 @@ if __name__ == '__main__':
             sft = (sft[0], sft[1] + 1)
             li.append(change)
             continue
-        print "attempting to sign first petition"
         sft = change.sign(url, sft)
-        print "iteration: " + str(i)
+        print "\titeration: " + str(i)
     print "retrying accts: %s" % len(li)
     saves = 0
     for change in li:
