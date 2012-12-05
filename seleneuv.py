@@ -198,7 +198,7 @@ if __name__ == '__main__':
         numIterations = int(sys.argv[2])
     
     for i in range(5):
-        "Starting iteration with sftUV=" + str(sftUV)
+        print "Starting iteration with sftUV=" + str(sftUV)
         uv = UserVoice(wb)
         sftUV = uv.sign(url, sftUV)
 
