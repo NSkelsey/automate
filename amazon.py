@@ -123,5 +123,3 @@ if __name__ == "__main__":
 
    #stop_fleet(conn,) # without r it will stop all instances with ami-id
     tally_states(conn) # will state how many instances are in an active state
-
-
