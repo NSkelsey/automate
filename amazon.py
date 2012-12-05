@@ -106,14 +106,13 @@ def tally_states(conn):
 #####################################
 if __name__ == "__main__":
 
-    # replace me here with your connection code
+    #conn = EC2Connection('AKIAIERYI27USRA2RILQ', 'bx65KNYwzfcqlUUxGcXrG935DGh4BsBkPwFtcMKf')
     ####################################
     conn = boto.connect_ec2()
 
     for i in range(7):
         r = launch_fleet(conn, 3) # launches x number of instances
         sleep(120) # inorder to give amazon time to think
-
         #r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
 
         print "="*50

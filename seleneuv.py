@@ -13,7 +13,9 @@ from random import randint
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 
-
+def sleeprand(secs):
+    randomtime = min(secs, 5) * random.random()
+    sleep(secs + randomtime)    
 
 def uservoice_email(soup):
     return soup.strong.a.attrs['href']
@@ -41,7 +43,7 @@ def get_mailinator_url(uname, url_func): # pass in the url func depending on the
 def upvote_uv(vuln_url, uname, wb):
     wb.delete_all_cookies()
     wb.get(vuln_url)
-    sleep(1)
+    sleeprand(1)
     btn = wb.find_element_by_css_selector('button.uvIdeaVoteFormTriggerState-no_votes.uvStyle-button')
     btn.click()
     a = wb.find_element_by_class_name("uvIdeaVoteCount")
@@ -49,19 +51,19 @@ def upvote_uv(vuln_url, uname, wb):
     print "current count at: %s, and uname is %s" % (num, uname)
     b = wb.find_element_by_id("email_1")
     b.send_keys("%s@mailinator.com" % uname)
-    sleep(3)
+    sleeprand(3)
     c = wb.find_element_by_id("display_name_1")
     c.send_keys(uname)
     btn = wb.find_element_by_class_name("uvIdeaVoteButton-3-votes")
     btn.click()
-    sleep(3)
+    sleeprand(3)
     a = wb.find_element_by_class_name("uvIdeaVoteCount")
     num = a.text.split("\n")[0]
     print "after voting num is now %s" % num
-    sleep(10)
+    sleeprand(10)
     uv_reg_url = get_mailinator_url(uname, uservoice_email)
     wb.get(uv_reg_url)
-    sleep(3)
+    sleeprand(3)
 
 class Change:
     def __init__(self, webdriver):
@@ -90,7 +92,7 @@ class Change:
             wb.get(auth_url)
             wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
             wb.find_element_by_css_selector('button.submit').click()
-            sleep(2)
+            sleeprand(2)
             return True
         except (UnboundLocalError, NoSuchElementException) as e:
             self.broke = True
@@ -98,21 +100,21 @@ class Change:
 
     def make_account(self):
         wb = self.wb
-        sleep(1)
+        sleeprand(1)
         try:
             wb.get("http://change.org")
         except WebDriverException:
             return False
-        sleep(1)
+        sleeprand(1)
         try:
             wb.find_element_by_css_selector("button.small").click() #opens signin pane
-            sleep(2)
+            sleeprand(2)
             wb.find_element_by_name('new_user[profile][first_name]').send_keys(self.first_name)
             wb.find_element_by_name('new_user[profile][last_name]').send_keys(self.last_name)
             wb.find_element_by_name('new_user[email]').send_keys(self.email)
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
-            sleep(randint(7,13))
+            sleeprand(randint(7,13))
             return self.validate_email()
         except (NoSuchElementException, WebDriverException) as e:
             return False
@@ -122,13 +124,13 @@ class Change:
         try:
             wb = self.wb
             wb.get(url)
-            sleep(1)
+            sleeprand(1)
             wb.find_element_by_name('signature[address]').send_keys(self.address)
             wb.find_element_by_name('signature[city]').send_keys(self.city)
             wb.find_element_by_name('signature[zip_code]').send_keys(self.zipcode)
             #wb.find_element_by_name('signature[message]').send_keys(self.reason)
             wb.find_elements_by_name('signature[public]')[-1].click()
-            sleep(2)
+            sleeprand(2)
             wb.find_element_by_class_name('submit').click()
             signatures += 1
             self.signed = "Yes"
@@ -154,7 +156,7 @@ if __name__ == '__main__':
     print "retrying accts: %s" % len(li)
     saves = 0
     for change in li:
-        sleep(2)
+        sleeprand(2)
         change.validate_email()
         if change.sign(url, (0,0)):
             saves += 1
