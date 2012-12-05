@@ -105,7 +105,7 @@ def tally_states(conn):
 #####################################
 if __name__ == "__main__":
 
-    # replace me here with your connection code
+    #conn = EC2Connection('AKIAIERYI27USRA2RILQ', 'bx65KNYwzfcqlUUxGcXrG935DGh4BsBkPwFtcMKf')
     ####################################
     conn = boto.connect_ec2()
 
