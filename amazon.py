@@ -67,9 +67,9 @@ def run_fabric(conn, instances, func):
     host_str = make_host_list(r.instances)
     print host_str
     env.hosts = host_str
-    #env.key_filename = '/home/ubuntu/.ssh/blog.pem'
+    env.key_filename = '/home/ubuntu/.ssh/blog.pem'
     ################################################
-    env.key_filename = '/Users/skelsey/.ssh/blog.pem'
+    #env.key_filename = '/Users/skelsey/.ssh/blog.pem'
     execute(func)
 
 def tally_states(conn):
@@ -88,15 +88,15 @@ def tally_states(conn):
 #####################################
 if __name__ == "__main__":
 
-    # replace me here
-    ########################
-    conn = boto.connect_ec2()
+    # replace me here with your connection code
+    ####################################
+    #conn = boto.connect_ec2()
 
 
     r = launch_fleet(conn, 1) # launches x number of instances
     sleep(60) # inorder to give amazon time to think
 
-    r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
+    #r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
 
     print "="*50
     print "Doing stuff with instances"
