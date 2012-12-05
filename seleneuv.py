@@ -69,7 +69,7 @@ class Change:
         self.last_name = uname
         self.reason = "reasons"
         self.password = 123456
-        self.zipcode = 12345
+        self.zipcode = 22904
         self.address = str(random.randint(1,500)) + " " + uname + " Street"
         self.city = 'charlottesville'
         self.state = 'VA'
@@ -101,7 +101,7 @@ class Change:
             wb.get("http://change.org")
         except WebDriverException:
             return False
-        sleep(10)
+        sleep(1)
         try:
             wb.find_element_by_css_selector("button.small").click() #opens signin pane
             sleep(2)
@@ -110,7 +110,7 @@ class Change:
             wb.find_element_by_name('new_user[email]').send_keys(self.email)
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
-            sleep(1)
+            sleep(10)
             return self.validate_email()
         except (NoSuchElementException, WebDriverException) as e:
             return False

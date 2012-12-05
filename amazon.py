@@ -118,13 +118,13 @@ if __name__ == "__main__":
     print "="*50
     print "Doing stuff with instances"
 
-    #run_fabric(conn, r.instances, uname)
-    run_fabric(conn, r.instances, update_repo)
-    run_fabric(conn, r.instances, change_drive_by)
+    run_fabric(conn, r.instances, uname)
+    #run_fabric(conn, r.instances, update_repo)
+    #run_fabric(conn, r.instances, change_drive_by)
 
     sleep(2)
     print "="*50
     print "Stopping...."
 
-    #stop_fleet(conn,) # without r it will stop all instances with ami-id
+    stop_fleet(conn,) # without r it will stop all instances with ami-id
     tally_states(conn) # will state how many instances are in an active state
