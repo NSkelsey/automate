@@ -144,11 +144,13 @@ class UserVoice:
         self.randomstring = ''.join(random.choice(string.ascii_lowercase) for x in range(13))
         self.name = self.randomstring
         self.email = self.randomstring + "@mailinator.com"
+        print "New UserVoice with random=" + self.randomstring
         try:
             webdriver.delete_all_cookies()
         except WebDriverException:
             webdriver.get(uservoice_url)
             webdriver.delete_all_cookies()
+        print "Cookies deleted"
         self.wb = webdriver
         self.broke = False
         self.signed = "No"
@@ -162,16 +164,20 @@ class UserVoice:
             #click vote
             btn = wb.find_element_by_css_selector("button.uvIdeaVoteFormTriggerState-no_votes.uvStyle-button")
             btn.click()
+            print "Vote button clicked"
             #enter e-mail
             emailbox = wb.find_element_by_id('email_1')
             emailbox.send_keys(self.email)
+            print "Email field filled with " + self.email
             #enter name
             sleeprand(2)
             namebox = wb.find_element_by_id('display_name_1')
-            namebox.send_keys(self.name)            
+            namebox.send_keys(self.name)           
+            print "Name field filled with " + self.name 
             #click 3 votes
             votes3 = wb.find_element_by_xpath("(//button[@name='to'])[3]")
             votes3.click()
+            print "3 votes button clicked"
             signatures += 1
             self.signed = "Yes"
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
@@ -192,6 +198,7 @@ if __name__ == '__main__':
         numIterations = int(sys.argv[2])
     
     for i in range(5):
+        "Starting iteration with sftUV=" + str(sftUV)
         uv = UserVoice(wb)
         sftUV = uv.sign(url, sftUV)
 
