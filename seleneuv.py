@@ -75,7 +75,11 @@ class Change:
         self.city = 'charlottesville'
         self.state = 'VA'
         self.email = self.last_name + "@mailinator.com"
-        webdriver.delete_all_cookies()
+        try:
+            webdriver.delete_all_cookies()
+        except WebDriverException:
+            webdriver.get("http://change.org")
+            webdriver.delete_all_cookies()
         self.wb = webdriver
         self.broke = False
         self.signed = "No"
