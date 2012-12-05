@@ -12,6 +12,7 @@ from selenium.common.exceptions import NoSuchElementException, ElementNotVisible
 from random import randint
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
+uservoice_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 
 def sleeprand(secs):
     randomtime = min(secs, 5) * random.random()
@@ -137,14 +138,63 @@ class Change:
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
             failures += 1
         return (signatures, failures)
+        
+class UserVoice:
+    def __init__(self, webdriver):
+        self.randomstring = ''.join(random.choice(string.ascii_lowercase) for x in range(13))
+        self.name = self.randomstring
+        self.email = self.randomstring + "@mailinator.com"
+        try:
+            webdriver.delete_all_cookies()
+        except WebDriverException:
+            webdriver.get(uservoice_url)
+            webdriver.delete_all_cookies()
+        self.wb = webdriver
+        self.broke = False
+        self.signed = "No"
+            
+    def sign(self, url, sft):
+        signatures, failures = sft
+        try:
+            wb = self.wb
+            wb.get(url)
+            sleeprand(1)
+            #click vote
+            btn = wb.find_element_by_css_selector("button.uvIdeaVoteFormTriggerState-no_votes.uvStyle-button")
+            btn.click()
+            #enter e-mail
+            emailbox = wb.find_element_by_id('email_1')
+            emailbox.send_keys(self.email)
+            #enter name
+            sleeprand(2)
+            namebox = wb.find_element_by_id('display_name_1')
+            namebox.send_keys(self.name)            
+            #click 3 votes
+            votes3 = wb.find_element_by_xpath("(//button[@name='to'])[3]")
+            votes3.click()
+            signatures += 1
+            self.signed = "Yes"
+        except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
+            failures += 1
+        return (signatures, failures)
 
 
 if __name__ == '__main__':
     wb = webdriver.Firefox()
     sft = (0, 0)
+    sftUV = (0, 0)
     li = []
-    url = sys.argv[1]
-    numIterations = int(sys.argv[2])
+    if (len(sys.argv) < 3):
+        url = vuln_url
+        numIterations = 5
+    else:
+        url = sys.argv[1]
+        numIterations = int(sys.argv[2])
+    
+    for i in range(5):
+        uv = UserVoice(wb)
+        sftUV = uv.sign(url, sftUV)
+
     for i in range(numIterations):
         change  = Change(wb)
         if not change.make_account():
@@ -169,8 +219,6 @@ if __name__ == '__main__':
     f = open('log.txt', 'w')
     f.write(log)
     f.close()
-
-
 
 
 """
