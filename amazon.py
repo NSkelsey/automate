@@ -44,10 +44,12 @@ def stop_fleet(conn, reservation=None):
 def make_host_list(instances):
     li = []
     for ins in instances:
+        ins.update()
         ctr = 1
         while ins.state != 'running' and ins.ip_address is None:
                 print "\tWaiting on %s State: %s" % (ins.id, ins.state)
                 sleep(10)
+                ins.update()
                 ctr += 1
                 if ctr > 6:
                     print "instance dead"
@@ -66,14 +68,15 @@ def uname():
 @task
 @parallel
 def change_drive_by():
-    sudo("Xvfb :15 -ac -screen 0 1024x768x8 &")
-    sudo("python ~/automate/seleneuv.py")
+    run("nohup Xvfb :15 -ac -screen 0 1024x768x8 &")
+    sleep(3)
+    run("export DISPLAY=:15; python ~/automate/seleneuv.py")
 
 @task
 @parallel
 def update_repo():
     run("rm -rf ~/automate")
-    run("git clone https://github.com/NSkelsey/automate.git")
+    run("git clone --quiet https://github.com/NSkelsey/automate.git")
 
 def run_fabric(conn, instances, func):
     host_str = make_host_list(r.instances)
@@ -105,10 +108,10 @@ if __name__ == "__main__":
     conn = boto.connect_ec2()
 
 
-    r = launch_fleet(conn, 1) # launches x number of instances
-    sleep(60) # inorder to give amazon time to think
+    #r = launch_fleet(conn, 1) # launches x number of instances
+    #sleep(60) # inorder to give amazon time to think
 
-    #r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
+    r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
 
     print "="*50
     print "Doing stuff with instances"

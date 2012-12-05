@@ -76,6 +76,22 @@ class Change:
         print 'account name: ' + self.email
         webdriver.delete_all_cookies()
         self.wb = webdriver
+        self.broke = False
+
+    def validate_email(self):
+        try:
+            auth_url = get_mailinator_url(self.last_name, change_email)
+            wb.get(auth_url)
+            wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
+            wb.find_element_by_css_selector('button.submit').click()
+            print "email validated"
+            sleep(2)
+            return True
+        except (UnboundLocalError) as e:
+            self.broke = True
+            print "auth failed"
+            return False
+
 
     def make_account(self):
         wb = self.wb
@@ -91,18 +107,8 @@ class Change:
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
             print "waiting for email"
-            sleep(15)
-            try:
-                auth_url = get_mailinator_url(self.last_name, change_email)
-                wb.get(auth_url)
-                wb.find_element_by_xpath("(//input[@name='user[password]'])[2]").send_keys(self.password) #renters password
-                wb.find_element_by_css_selector('button.submit').click()
-                print "email validated"
-                sleep(2)
-                return True
-            except (UnboundLocalError) as e:
-                print "auth failed"
-                return False
+            sleep(1)
+            return self.validate_email()
         except (NoSuchElementException, WebDriverException) as e:
             print "Failed to make account"
             return False
@@ -133,18 +139,35 @@ if __name__ == '__main__':
     wb = webdriver.Firefox()
     #wb = Remote("http://0.0.0.0:80/wd/hub", DesiredCapabilities.FIREFOX)
     sft = (0, 0)
-    for i in range(200):
+    li = []
+    url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
+    for i in range(2):
         change  = Change(wb)
         if not change.make_account():
+            sft = (sft[0], sft[1] + 1)
+            li.append(change)
             continue
         print "attempting to sign first petition"
-        sft = change.sign("http://www.change.org/petitions/the-uva-allow-more-student-feedback", sft)
+        sft = change.sign(url, sft)
         print "iteration: " + str(i)
-    log = "failures: %s successes:  %s \n" % sft
+    print "retrying accts: %s" % len(li)
+    saves = 0
+    for change in li:
+        sleep(2)
+        change.validate_email()
+        if change.sign(url, (0,0)):
+            saves += 1
+
+    log = "="*50 + "\nRUN COMPLETED\n"
+    log += "Successes: %s\nFailures: %s\nSaves: %s\n" % (sft[0], sft[1], saves)
+    log += "="*50
     print log
     f = open('log.txt', 'w')
     f.write(log)
     f.close()
+
+
+
 
 """
   for i in range(5):
