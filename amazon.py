@@ -108,8 +108,8 @@ if __name__ == "__main__":
     conn = boto.connect_ec2()
 
 
-    #r = launch_fleet(conn, 1) # launches x number of instances
-    #sleep(60) # inorder to give amazon time to think
+    r = launch_fleet(conn, 5) # launches x number of instances
+    sleep(60) # inorder to give amazon time to think
 
     r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
 
@@ -124,5 +124,5 @@ if __name__ == "__main__":
     print "="*50
     print "Stopping...."
 
-   #stop_fleet(conn,) # without r it will stop all instances with ami-id
+    #stop_fleet(conn,) # without r it will stop all instances with ami-id
     tally_states(conn) # will state how many instances are in an active state
