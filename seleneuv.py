@@ -12,7 +12,7 @@ from selenium.common.exceptions import NoSuchElementException, ElementNotVisible
 from random import randint
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
-uservoice_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
+uservoice_url = "http://speakupuva.uservoice.com/forums/11875-speakupuva/suggestions/3249267-towels-in-bathrooms-to-replace-paper-towels"
 
 def sleeprand(secs):
     randomtime = min(secs, 5) * random.random()
@@ -141,9 +141,13 @@ class Change:
         
 class UserVoice:
     def __init__(self, webdriver):
-        self.randomstring = ''.join(random.choice(string.ascii_lowercase) for x in range(13))
+        #uva-style ID
+        self.randomstring = (''.join(random.choice(string.ascii_lowercase) for x in range(3)) 
+                               + str(random.randint(0,9)) 
+                               + ''.join(random.choice(string.ascii_lowercase) for x in range(2))
+                            )
         self.name = self.randomstring
-        self.email = self.randomstring + "@mailinator.com"
+        self.email = self.randomstring + "@virginia.edu"
         print "New UserVoice with random=" + self.randomstring
         try:
             webdriver.delete_all_cookies()
@@ -177,7 +181,7 @@ class UserVoice:
             #click 3 votes
             votes3 = wb.find_element_by_xpath("(//button[@name='to'])[3]")
             votes3.click()
-            print "Voted 3 with name and email = " + self.name
+            print "Voted 3 with email = " + self.email
             signatures += 1
             self.signed = "Yes"
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
@@ -186,7 +190,6 @@ class UserVoice:
 
 
 if __name__ == '__main__':
-    wb = webdriver.Firefox()
     sft = (0, 0)
     sftUV = (0, 0)
     li = []
@@ -197,6 +200,10 @@ if __name__ == '__main__':
         url = sys.argv[1]
         numIterations = int(sys.argv[2])
     
+    print "..--==****STUFFING USERVOICE PAGE****==--.."
+    print "URL = " + uservoice_url
+    print "-------------------------------------------"
+    sleep(5)
     for i in range(5):
         print "=====Starting iteration with sftUV=" + str(sftUV) + "======"
         newwb = webdriver.Firefox()
