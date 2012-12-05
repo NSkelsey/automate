@@ -150,7 +150,7 @@ class UserVoice:
         except WebDriverException:
             webdriver.get(uservoice_url)
             webdriver.delete_all_cookies()
-        print "Cookies deleted"
+        #print "Cookies deleted"
         self.wb = webdriver
         self.broke = False
         self.signed = "No"
@@ -164,20 +164,20 @@ class UserVoice:
             #click vote
             btn = wb.find_element_by_css_selector("button.uvIdeaVoteFormTriggerState-no_votes.uvStyle-button")
             btn.click()
-            print "Vote button clicked"
+            #print "Vote button clicked"
             #enter e-mail
             emailbox = wb.find_element_by_id('email_1')
             emailbox.send_keys(self.email)
-            print "Email field filled with " + self.email
+            #print "Email field filled with " + self.email
             #enter name
             sleeprand(1)
             namebox = wb.find_element_by_id('display_name_1')
             namebox.send_keys(self.name)           
-            print "Name field filled with " + self.name 
+            #print "Name field filled with " + self.name 
             #click 3 votes
             votes3 = wb.find_element_by_xpath("(//button[@name='to'])[3]")
             votes3.click()
-            print "3 votes button clicked"
+            print "Voted 3 with name and email = " + self.name
             signatures += 1
             self.signed = "Yes"
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
