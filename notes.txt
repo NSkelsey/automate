@@ -25,7 +25,9 @@ http://serverfault.com/questions/108781/how-can-i-run-selenium-tests-on-an-ubunt
 
 http://www.veracode.com/blog/2012/11/security-headers-report/
 
-obscurity
- 
+ to start node
 java -jar selenium-server-standalone-2.26.0.jar -role node -hub
 http://54.243.59.236:80/grid/register -browser browserName=firefox
+
+to start hub
+sudo java -jar selenium-server-standalone-2.26.0.jar -role hub -port 80 &
