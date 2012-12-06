@@ -9,7 +9,6 @@ import random
 import string
 from IPython import embed
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
-from random import randint
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 
@@ -114,7 +113,7 @@ class Change:
             wb.find_element_by_name('new_user[email]').send_keys(self.email)
             wb.find_element_by_name('new_user[password]').send_keys(self.password)
             wb.find_element_by_id('new_user_submit').click()
-            sleeprand(randint(7,13))
+            sleeprand(10)
             return self.validate_email()
         except (NoSuchElementException, WebDriverException) as e:
             return False
@@ -152,7 +151,7 @@ if __name__ == '__main__':
             li.append(change)
             continue
         sft = change.sign(url, sft)
-        print "<itr: %s, Accnt: %s, Created: %s, Signed: %s>" % (str(i), change.last_name, str(change.broke), change.signed)
+        print "<itr: %s, Accnt: %s, Created: %s, Signed: %s>" % (str(i), change.last_name, str(not change.broke), change.signed)
     print "retrying accts: %s" % len(li)
     saves = 0
     for change in li:
@@ -160,7 +159,7 @@ if __name__ == '__main__':
         change.validate_email()
         if change.sign(url, (0,0)):
             saves += 1
-            print "<itr: %s, Accnt: %s, Created: %s, Signed: %s>" % (str(i), change.last_name, str(not change.broke), change.signed)
+            print "<Accnt: %s, Created: %s, Signed: %s>" % (, change.last_name, str(not change.broke), change.signed)
 
     log = "="*50 + "\nRUN COMPLETED\n"
     log += "Successes: %s\nFailures: %s\nSaves: %s\nTotal: %s\n" % (sft[0], sft[1], saves, saves+sft[0])

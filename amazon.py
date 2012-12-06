@@ -2,7 +2,7 @@ from boto.ec2.connection import EC2Connection
 import boto
 from time import sleep
 from fabric.api import *
-
+from datetime import datetime
 
 ami_id = "ami-c3a222aa" #selenebox3
 
@@ -111,7 +111,9 @@ if __name__ == "__main__":
     conn = boto.connect_ec2()
 
     for i in range(7):
+
         r = launch_fleet(conn, 3) # launches x number of instances
+        print datetime.now()
         sleep(120) # inorder to give amazon time to think
         #r = conn.get_all_instances()[-1] #helpful to get last reservation lauched
 
@@ -121,13 +123,15 @@ if __name__ == "__main__":
         run_fabric(conn, r.instances, uname)
         run_fabric(conn, r.instances, update_repo)
         run_fabric(conn, r.instances, change_drive_by)
-
+        
         sleep(2)
+        print datetime.now()
         print "="*50
         print "Stopping...."
 
-        stop_fleet(conn,) # without r it will stop all instances with ami-id
+        stop_fleet(conn,r) # without r it will stop all instances with ami-id
         tally_states(conn) # will state how many instances are in an active state
         print "Sleeping"
     stop_fleet(conn,)
+    tally_states(conn)
 
