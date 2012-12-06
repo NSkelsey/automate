@@ -10,6 +10,9 @@ import string
 from IPython import embed
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
 
+import process
+import redis
+
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 uservoice_url = "http://speakupuva.uservoice.com/forums/11875-speakupuva/suggestions/3249267-towels-in-bathrooms-to-replace-paper-towels"
 
@@ -188,17 +191,7 @@ class UserVoice:
         return (signatures, failures)
 
 
-if __name__ == '__main__':
-    sft = (0, 0)
-    sftUV = (0, 0)
-    li = []
-    if (len(sys.argv) < 3):
-        url = vuln_url
-        numIterations = 5
-    else:
-        url = sys.argv[1]
-        numIterations = int(sys.argv[2])
-    
+def uservoice_run(url, numIterations, sftUV):
     print "..--==****STUFFING USERVOICE PAGE****==--.."
     print "URL = " + uservoice_url
     print "-------------------------------------------"
@@ -210,6 +203,7 @@ if __name__ == '__main__':
         sftUV = uv.sign(uservoice_url, sftUV)
         newwb.close()
 
+def change_run(url, numIterations, sft):
     wb = webdriver.Firefox()
     for i in range(numIterations):
         change  = Change(wb)
@@ -226,7 +220,7 @@ if __name__ == '__main__':
         change.validate_email()
         if change.sign(url, (0,0)):
             saves += 1
-            print "<Accnt: %s, Created: %s, Signed: %s>" % (, change.last_name, str(not change.broke), change.signed)
+            print "<Accnt: %s, Created: %s, Signed: %s>" % ( change.last_name, str(not change.broke), change.signed)
 
     log = "="*50 + "\nRUN COMPLETED\n"
     log += "Successes: %s\nFailures: %s\nSaves: %s\nTotal: %s\n" % (sft[0], sft[1], saves, saves+sft[0])
@@ -235,6 +229,37 @@ if __name__ == '__main__':
     f = open('log.txt', 'w')
     f.write(log)
     f.close()
+
+def redis_run(url, numIterations):
+    wb = webdriver.Firefox()
+    wb.get(url)
+    element = wb.find_element_by_id("recaptcha_image")
+    img = process.make_html_img(element, wb)
+    
+    wb.close()
+
+if __name__ == '__main__':
+    sft = (0, 0)
+    sftUV = (0, 0)
+    li = []
+    if (len(sys.argv) < 3):
+        url = vuln_url
+        numIterations = 5
+    else:
+        url = sys.argv[1]
+        numIterations = int(sys.argv[2])
+    exploit_site = sys.argv[3]
+    if exploit_site == 'uv' or exploit_site == "studco":
+        uservoice_run(url, numIterations, sftUV)
+    elif exploit_site == "change":
+        change_run(url, numIterations, sft)
+    elif exploit_site == "test":
+        redis_run(url, numIterations)
+    else:
+        print "You must specify which site to use"
+
+
+
 
 
 """
