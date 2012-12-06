@@ -10,8 +10,6 @@ import string
 from IPython import embed
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
 
-import process
-import redis
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
 uservoice_url = "http://speakupuva.uservoice.com/forums/11875-speakupuva/suggestions/3249267-towels-in-bathrooms-to-replace-paper-towels"
@@ -231,11 +229,28 @@ def change_run(url, numIterations, sft):
     f.close()
 
 def redis_run(url, numIterations):
+    import process
+    import redis
     wb = webdriver.Firefox()
     wb.get(url)
+    c = 'CMDS'
+    _id = random.randint(0, pow(2,17))
     element = wb.find_element_by_id("recaptcha_image")
     img = process.make_html_img(element, wb)
-    
+    rconn = redis.StrictRedis(host='50.17.215.201', port=6379, db=0, password="reallylongandhardtoguesspassword")
+    ps = rconn.pubsub()
+    print _id
+    rconn.publish(c, str(_id) + ":" + img) # I am listening here for the solution
+    ps.subscribe(str(_id))
+    solution = ""
+    for m in ps.listen():
+        if m['type'] == 'message':
+            solution = m.get('data')
+            break
+    print solution
+    field = wb.find_element_by_id('recaptcha_response_field')
+    field.send_keys(solution)
+    field.send_keys('\n')
     wb.close()
 
 if __name__ == '__main__':
