@@ -113,12 +113,12 @@ if __name__ == "__main__":
     #conn = boto.connect_ec2()
 
     for i in range(7):
-        if (i != 0):
+        if (i != -1):
             r = launch_fleet(conn, 5) # launches x number of instances
+            sleep(120) # inorder to give amazon time to think
         else:
             r = conn.get_all_instances()[-1] #helpful to get last reservation lauched  
         print datetime.now()          
-        sleep(120) # inorder to give amazon time to think
 
         print "="*50
         print "Doing stuff with instances"
