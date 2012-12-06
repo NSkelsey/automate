@@ -4,6 +4,7 @@ from time import sleep
 from fabric.api import *
 from datetime import datetime
 
+UV_URL = "http://speakupuva.uservoice.com/forums/11875-speakupuva/suggestions/3249267-towels-in-bathrooms-to-replace-paper-towels"
 ami_id = "ami-c3a222aa" #selenebox3
 
 def reset_ip(instance):
@@ -70,10 +71,11 @@ def uname():
 def change_drive_by():
     run("nohup Xvfb :15 -ac -screen 0 1024x768x8 &", pty=False)
     sleep(3)
-    url = "http://www.change.org/petitions/the-uva-allow-more-student-feedback"
-    numIterations = 35
+    url = UV_URL
+    type = "uv"
+    numIterations = 5
     with settings(warn_only=True):
-        run("export DISPLAY=:15; python ~/automate/seleneuv.py %s %s" % (url, numIterations))
+        run("export DISPLAY=:15; python ~/automate/seleneuv.py %s %s %s" % (url, numIterations, type))
 
 @task
 @parallel
@@ -85,9 +87,9 @@ def run_fabric(conn, instances, func):
     host_str = make_host_list(r.instances)
     print host_str
     env.hosts = host_str
-    #env.key_filename = '/home/ubuntu/.ssh/blog.pem'
+    env.key_filename = '/home/ubuntu/.ssh/blog.pem'
     ################################################
-    env.key_filename = '/Users/skelsey/.ssh/blog.pem'
+    #env.key_filename = '/Users/skelsey/.ssh/blog.pem'
     execute(func)
 
 def tally_states(conn):
@@ -106,13 +108,13 @@ def tally_states(conn):
 #####################################
 if __name__ == "__main__":
 
-    #conn = EC2Connection('AKIAIERYI27USRA2RILQ', 'bx65KNYwzfcqlUUxGcXrG935DGh4BsBkPwFtcMKf')
+    conn = EC2Connection('AKIAIERYI27USRA2RILQ', 'bx65KNYwzfcqlUUxGcXrG935DGh4BsBkPwFtcMKf')
     ####################################
-    conn = boto.connect_ec2()
+    #conn = boto.connect_ec2()
 
     for i in range(7):
 
-        r = launch_fleet(conn, 3) # launches x number of instances
+        r = launch_fleet(conn, 5) # launches x number of instances
         print datetime.now()
         sleep(120) # inorder to give amazon time to think
         #r = conn.get_all_instances()[-1] #helpful to get last reservation lauched

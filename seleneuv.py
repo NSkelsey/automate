@@ -13,7 +13,6 @@ import whiteh
 
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
-uservoice_url = "http://speakupuva.uservoice.com/forums/11875-speakupuva/suggestions/3249267-towels-in-bathrooms-to-replace-paper-towels"
 
 def sleeprand(secs):
     randomtime = min(secs, 5) * random.random()
@@ -153,7 +152,7 @@ class UserVoice:
         try:
             webdriver.delete_all_cookies()
         except WebDriverException:
-            webdriver.get(uservoice_url)
+            webdriver.get(url)
             webdriver.delete_all_cookies()
         #print "Cookies deleted"
         self.wb = webdriver
@@ -192,14 +191,14 @@ class UserVoice:
 
 def uservoice_run(url, numIterations, sftUV):
     print "..--==****STUFFING USERVOICE PAGE****==--.."
-    print "URL = " + uservoice_url
+    print "URL = " + url
     print "-------------------------------------------"
     sleep(5)
     for i in range(5):
         print "=====Starting iteration with sftUV=" + str(sftUV) + "======"
         newwb = webdriver.Firefox()
         uv = UserVoice(newwb)
-        sftUV = uv.sign(uservoice_url, sftUV)
+        sftUV = uv.sign(url, sftUV)
         newwb.close()
 
 def change_run(url, numIterations, sft):
