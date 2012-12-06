@@ -253,6 +253,7 @@ def redis_run(url, numIterations):
         field = wb.find_element_by_id('recaptcha_response_field')
         field.send_keys(solution)
         field.send_keys('\n')
+        sleep(1)
         wb.close()
 
 def white_run(url, numIterations): #DANGER
