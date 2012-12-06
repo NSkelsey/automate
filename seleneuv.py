@@ -11,6 +11,7 @@ from IPython import embed
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
+uservoice_url = "http://speakupuva.uservoice.com/forums/11875-speakupuva/suggestions/3249267-towels-in-bathrooms-to-replace-paper-towels"
 
 def sleeprand(secs):
     randomtime = min(secs, 5) * random.random()
@@ -136,14 +137,80 @@ class Change:
         except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
             failures += 1
         return (signatures, failures)
+        
+class UserVoice:
+    def __init__(self, webdriver):
+        #uva-style ID
+        self.randomstring = (''.join(random.choice(string.ascii_lowercase) for x in range(3)) 
+                               + str(random.randint(0,9)) 
+                               + ''.join(random.choice(string.ascii_lowercase) for x in range(2))
+                            )
+        self.name = self.randomstring
+        self.email = self.randomstring + "@virginia.edu"
+        print "New UserVoice with random=" + self.randomstring
+        try:
+            webdriver.delete_all_cookies()
+        except WebDriverException:
+            webdriver.get(uservoice_url)
+            webdriver.delete_all_cookies()
+        #print "Cookies deleted"
+        self.wb = webdriver
+        self.broke = False
+        self.signed = "No"
+            
+    def sign(self, url, sft):
+        signatures, failures = sft
+        try:
+            wb = self.wb
+            wb.get(url)
+            sleeprand(1)
+            #click vote
+            btn = wb.find_element_by_css_selector("button.uvIdeaVoteFormTriggerState-no_votes.uvStyle-button")
+            btn.click()
+            #print "Vote button clicked"
+            #enter e-mail
+            emailbox = wb.find_element_by_id('email_1')
+            emailbox.send_keys(self.email)
+            #print "Email field filled with " + self.email
+            #enter name
+            sleeprand(1)
+            namebox = wb.find_element_by_id('display_name_1')
+            namebox.send_keys(self.name)           
+            #print "Name field filled with " + self.name 
+            #click 3 votes
+            votes3 = wb.find_element_by_xpath("(//button[@name='to'])[3]")
+            votes3.click()
+            print "Voted 3 with email = " + self.email
+            signatures += 1
+            self.signed = "Yes"
+        except (ElementNotVisibleException, NoSuchElementException, WebDriverException) as e:
+            failures += 1
+        return (signatures, failures)
 
 
 if __name__ == '__main__':
-    wb = webdriver.Firefox()
     sft = (0, 0)
+    sftUV = (0, 0)
     li = []
-    url = sys.argv[1]
-    numIterations = int(sys.argv[2])
+    if (len(sys.argv) < 3):
+        url = vuln_url
+        numIterations = 5
+    else:
+        url = sys.argv[1]
+        numIterations = int(sys.argv[2])
+    
+    print "..--==****STUFFING USERVOICE PAGE****==--.."
+    print "URL = " + uservoice_url
+    print "-------------------------------------------"
+    sleep(5)
+    for i in range(5):
+        print "=====Starting iteration with sftUV=" + str(sftUV) + "======"
+        newwb = webdriver.Firefox()
+        uv = UserVoice(newwb)
+        sftUV = uv.sign(uservoice_url, sftUV)
+        newwb.close()
+
+    wb = webdriver.Firefox()
     for i in range(numIterations):
         change  = Change(wb)
         if not change.make_account():
@@ -168,8 +235,6 @@ if __name__ == '__main__':
     f = open('log.txt', 'w')
     f.write(log)
     f.close()
-
-
 
 
 """
