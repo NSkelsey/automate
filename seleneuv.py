@@ -9,7 +9,7 @@ import random
 import string
 from IPython import embed
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException, WebDriverException
-import whiteh
+#import whiteh
 
 
 vuln_url = "http://drudgeretort.uservoice.com/forums/184052-general/suggestions/3358099-seed-this-forum-with-your-ideas"
@@ -253,13 +253,14 @@ def redis_run(url, numIterations):
         field.send_keys(solution)
         field.send_keys('\n')
         wb.close()
-
+"""
 def white_run(url, numIterations): #DANGER
     for i in range(numIterations):
         wb = webdriver.Firefox()
         whoo = whiteh.WhiteHoo(wb)
         whoo.make_account()
         wb.close()
+"""
 
 if __name__ == '__main__':
     sft = (0, 0)
@@ -278,8 +279,8 @@ if __name__ == '__main__':
         change_run(url, numIterations, sft)
     elif exploit_site == "test":
         redis_run(url, numIterations)
-    elif exploit_site == "government": #DANGER
-        white_run(url, numIterations)
+#    elif exploit_site == "government": #DANGER
+#        white_run(url, numIterations)
     else:
         print "You must specify which site to use"
 

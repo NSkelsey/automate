@@ -13,7 +13,7 @@ def reset_ip(instance):
 
 def launch_fleet(conn, num):
     print "launching %s instances" % num
-    reservation = conn.run_instances(ami_id, instance_type="t1.micro", min_count=num, max_count=num, key_name='blog')
+    reservation = conn.run_instances(ami_id, instance_type="t1.micro", min_count=num, max_count=num, key_name='mbk6wm')
     print "reservation id: %s" % reservation.id
     sleep(5)
     for i in reservation.instances:
